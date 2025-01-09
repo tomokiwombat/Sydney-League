@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riichi Mahjong Scores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        form {
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Sydney Riichi Mahjong League Scores</h1>
+    </header>
+
+    <nav>
+        <a href="#leaderboard" id="leaderboardTab">Leaderboard</a>
+        <a href="#pastGames" id="pastGamesTab">Past Games</a>
+    </nav>
+
+    <main id="leaderboardSection">
+        <h2>Submit Scores</h2>
+        <form id="scoreForm">
+            <div>
+                <label for="player1">Player 1 Name:</label>
+                <input type="text" id="player1" name="player1" required>
+
+                <label for="score1">Score:</label>
+                <input type="number" id="score1" name="score1" required>
+            </div>
+            <div>
+                <label for="player2">Player 2 Name:</label>
+                <input type="text" id="player2" name="player2" required>
+
+                <label for="score2">Score:</label>
+                <input type="number" id="score2" name="score2" required>
+            </div>
+            <div>
+                <label for="player3">Player 3 Name:</label>
+                <input type="text" id="player3" name="player3" required>
+
+                <label for="score3">Score:</label>
+                <input type="number" id="score3" name="score3" required>
+            </div>
+            <div>
+                <label for="player4">Player 4 Name:</label>
+                <input type="text" id="player4" name="player4" required>
+
+                <label for="score4">Score:</label>
+                <input type="number" id="score4" name="score4" required>
+            </div>
+            <button type="submit" class="button">Submit</button>
+        </form>
+
+        <h2>Leaderboard</h2>
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Total Score</th>
+                    <th>Games Played</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Leaderboard rows will be populated here -->
+            </tbody>
+        </table>
+    </main>
+
+    <main id="pastGamesSection" class="hidden">
+        <h2>Past Games</h2>
+        <table id="pastGames">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Player 1</th>
+                    <th>Score 1</th>
+                    <th>Player 2</th>
+                    <th>Score 2</th>
+                    <th>Player 3</th>
+                    <th>Score 3</th>
+                    <th>Player 4</th>
+                    <th>Score 4</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Past games rows will be populated here -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        const leaderboard = [];
+        const pastGames = [];
+
+        const scoreForm = document.getElementById('scoreForm');
+        const leaderboardTable = document.getElementById('leaderboard').getElementsByTagName('tbody')[0];
+        const pastGamesTable = document.getElementById('pastGames').getElementsByTagName('tbody')[0];
+
+        const leaderboardTab = document.getElementById('leaderboardTab');
+        const pastGamesTab = document.getElementById('pastGamesTab');
+        const leaderboardSection = document.getElementById('leaderboardSection');
+        const pastGamesSection = document.getElementById('pastGamesSection');
+
+        leaderboardTab.addEventListener('click', () => {
+            leaderboardSection.classList.remove('hidden');
+            pastGamesSection.classList.add('hidden');
+        });
+
+        pastGamesTab.addEventListener('click', () => {
+            leaderboardSection.classList.add('hidden');
+            pastGamesSection.classList.remove('hidden');
+        });
+
+        scoreForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get player names and scores
+            const players = [
+                {name: document.getElementById('player1').value, score: parseInt(document.getElementById('score1').value, 10)},
+                {name: document.getElementById('player2').value, score: parseInt(document.getElementById('score2').value, 10)},
+                {name: document.getElementById('player3').value, score: parseInt(document.getElementById('score3').value, 10)},
+                {name: document.getElementById('player4').value, score: parseInt(document.getElementById('score4').value, 10)},
+            ];
+
+            // Check total score
+            const totalScore = players.reduce((sum, player) => sum + player.score, 0);
+            if (totalScore !== 100000) {
+                alert('The total score of all players must equal 100000.');
+                return;
+            }
+
+            // Record the game
+            const gameDate = new Date().toLocaleString();
+            pastGames.push({date: gameDate, players});
+
+            // Add game to the Past Games table
+            const row = pastGamesTable.insertRow();
+            row.insertCell(0).textContent = gameDate;
+            players.forEach(player => {
+                row.insertCell().textContent = player.name;
+                row.insertCell().textContent = player.score;
+            });
+
+            // Sort players by their input scores in descending order to determine rankings
+            players.sort((a, b) => b.score - a.score);
+
+            // Calculate rank points
+            const rankPoints = [50, 10, -10, -30];
+            const scoresToPoints = new Map();
+
+            players.forEach((player, index) => {
+                const tiedPlayers = players.filter(p => p.score === player.score);
+                if (tiedPlayers.length > 1) {
+                    const meanRankPoints = tiedPlayers.reduce((sum, p, i) => sum + rankPoints[index + i], 0) / tiedPlayers.length;
+                    tiedPlayers.forEach(p => scoresToPoints.set(p.score, meanRankPoints));
+                } else {
+                    scoresToPoints.set(player.score, rankPoints[index]);
+                }
+            });
+
+            players.forEach(player => {
+                let convertedScore = (player.score / 1000) - 30 + scoresToPoints.get(player.score);
+
+                // Update leaderboard
+                const existingPlayer = leaderboard.find(entry => entry.player === player.name);
+                if (existingPlayer) {
+                    existingPlayer.score += convertedScore;
+                    existingPlayer.gamesPlayed += 1;
+                } else {
+                    leaderboard.push({player: player.name, score: convertedScore, gamesPlayed: 1});
+                }
+            });
+
+            // Sort leaderboard by total scores in descending order
+            leaderboard.sort((a, b) => b.score - a.score);
+
+            // Render updated leaderboard
+            renderLeaderboard();
+
+            // Clear form
+            scoreForm.reset();
+        });
+
+        function renderLeaderboard() {
+            leaderboardTable.innerHTML = '';
+            leaderboard.forEach((entry, index) => {
+                const row = leaderboardTable.insertRow();
+                row.insertCell(0).textContent = index + 1;
+                row.insertCell(1).textContent = entry.player;
+                row.insertCell(2).textContent = entry.score.toFixed(2); // Display score with two decimal places
+                row.insertCell(3).textContent = entry.gamesPlayed; // Display games played
+            });
+        }
+    </script>
+</body>
+
+</html>
